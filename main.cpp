@@ -9,12 +9,15 @@ private:
     double amount;
 
 public:
-    // Constructor
-    Transaction(string t, double a) : type(t), amount(a) {}
+    // Constructor using the `this` pointer
+    Transaction(string t, double a) {
+        this->type = t;  // `this->type` refers to the current object's type
+        this->amount = a; // `this->amount` refers to the current object's amount
+    }
 
     // Member function to display the transaction details
     void displayTransaction() {
-        cout << "Transaction Type: " << type << ", Amount: " << amount << endl;
+        cout << "Transaction Type: " << type << ", Amount: $" << amount << endl;
     }
 
     // Member function to get the transaction amount
@@ -30,23 +33,26 @@ private:
     double balance;
 
 public:
-    // Constructor
-    Account(string name, double bal) : accountName(name), balance(bal) {}
+    // Constructor using the `this` pointer
+    Account(string name, double bal) {
+        this->accountName = name;  // `this->accountName` refers to the current object's accountName
+        this->balance = bal;       // `this->balance` refers to the current object's balance
+    }
 
     // Member function to add a transaction (either income or expense)
     void addTransaction(Transaction t) {
         if (t.getAmount() > 0) {
-            balance += t.getAmount();
-            cout << "Added income of " << t.getAmount() << " to " << accountName << endl;
+            this->balance += t.getAmount();
+            cout << "Added income of $" << t.getAmount() << " to " << this->accountName << endl;
         } else {
-            balance += t.getAmount();  // Deduct if expense
-            cout << "Added expense of " << -t.getAmount() << " to " << accountName << endl;
+            this->balance += t.getAmount();  // Deduct if expense
+            cout << "Added expense of $" << -t.getAmount() << " to " << this->accountName << endl;
         }
     }
 
     // Member function to display the account balance
     void displayBalance() {
-        cout << "Current Balance in " << accountName << ": " << balance << endl;
+        cout << "Current Balance in " << this->accountName << ": $" << this->balance << endl;
     }
 };
 
