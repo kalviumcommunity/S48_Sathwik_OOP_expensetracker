@@ -6,17 +6,20 @@ class Transaction {
 private:
     string type;
     double amount;
-    static int transactionCount;  // Static variable to track the number of transactions
+    static int transactionCount;  // Static variable to track the total number of transactions
 
 public:
+    // Constructor increments transaction count on every new transaction
     Transaction(string t = "", double a = 0.0) : type(t), amount(a) {
-        transactionCount++;  // Increment transaction count on every new transaction
+        transactionCount++;
     }
 
+    // Destructor decrements count when a transaction is deleted
     ~Transaction() {
-        transactionCount--;  // Decrement count when a transaction is deleted
+        transactionCount--;
     }
 
+    // Function to display transaction details
     void displayTransaction() {
         cout << "Transaction Type: " << type << ", Amount: $" << amount << endl;
     }
@@ -31,7 +34,8 @@ public:
     }
 };
 
-int Transaction::transactionCount = 0;  // Initialize static variable
+// Initialize static variable
+int Transaction::transactionCount = 0;
 
 class Account {
 private:
@@ -43,19 +47,23 @@ private:
     static int accountCount;  // Static variable to track the number of accounts
 
 public:
-    Account(string name, double bal, int maxTrans = 10) : accountName(name), balance(bal), transactionCount(0), maxTransactions(maxTrans) {
+    // Constructor initializes account and increments account count
+    Account(string name, double bal, int maxTrans = 10) 
+        : accountName(name), balance(bal), transactionCount(0), maxTransactions(maxTrans) {
         transactions = new Transaction*[maxTransactions];
-        accountCount++;  // Increment account count on every new account
+        accountCount++;
     }
 
+    // Destructor frees memory and decrements account count
     ~Account() {
         for (int i = 0; i < transactionCount; i++) {
             delete transactions[i];
         }
         delete[] transactions;
-        accountCount--;  // Decrement count when an account is deleted
+        accountCount--;
     }
 
+    // Adds a transaction to the account
     void addTransaction(string type, double amount) {
         if (transactionCount < maxTransactions) {
             transactions[transactionCount] = new Transaction(type, amount);
@@ -94,20 +102,23 @@ public:
 int Account::accountCount = 0;
 
 int main() {
+    // Creating instances of Account
     Account myAccount("Savings Account", 1000.0);
     Account anotherAccount("Checking Account", 500.0);
 
+    // Adding transactions to accounts
     myAccount.addTransaction("Income", 500.0);
     myAccount.addTransaction("Expense", -200.0);
     anotherAccount.addTransaction("Income", 300.0);
 
+    // Display balance and transactions for each account
     myAccount.displayBalance();
     myAccount.displayAllTransactions();
 
     anotherAccount.displayBalance();
     anotherAccount.displayAllTransactions();
 
-    // Display static variable values
+    // Using static member functions to display total counts
     cout << "Total Accounts Created: " << Account::getAccountCount() << endl;
     cout << "Total Transactions Created: " << Transaction::getTransactionCount() << endl;
 
