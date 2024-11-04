@@ -19,13 +19,29 @@ public:
         transactionCount--;
     }
 
+    // Accessor for transaction type
+    string getType() const {
+        return type;
+    }
+
+    // Mutator for transaction type
+    void setType(const string& t) {
+        type = t;
+    }
+
+    // Accessor for amount
+    double getAmount() const {
+        return amount;
+    }
+
+    // Mutator for amount
+    void setAmount(double a) {
+        amount = a;
+    }
+
     // Function to display transaction details
     void displayTransaction() {
         cout << "Transaction Type: " << type << ", Amount: $" << amount << endl;
-    }
-
-    double getAmount() {
-        return amount;
     }
 
     // Static function to get the total transaction count
@@ -63,8 +79,32 @@ public:
         accountCount--;
     }
 
+    // Accessor for account name
+    string getAccountName() const {
+        return accountName;
+    }
+
+    // Mutator for account name
+    void setAccountName(const string& name) {
+        accountName = name;
+    }
+
+    // Accessor for balance
+    double getBalance() const {
+        return balance;
+    }
+
+    // Mutator for balance (validates that balance cannot go below zero)
+    void setBalance(double newBalance) {
+        if (newBalance >= 0) {
+            balance = newBalance;
+        } else {
+            cout << "Invalid balance amount." << endl;
+        }
+    }
+
     // Adds a transaction to the account
-    void addTransaction(string type, double amount) {
+    void addTransaction(const string& type, double amount) {
         if (transactionCount < maxTransactions) {
             transactions[transactionCount] = new Transaction(type, amount);
             transactionCount++;
@@ -81,11 +121,11 @@ public:
         }
     }
 
-    void displayBalance() {
+    void displayBalance() const {
         cout << "Current Balance in " << accountName << ": $" << balance << endl;
     }
 
-    void displayAllTransactions() {
+    void displayAllTransactions() const {
         cout << "Transactions for " << accountName << ":" << endl;
         for (int i = 0; i < transactionCount; i++) {
             transactions[i]->displayTransaction();
@@ -105,6 +145,10 @@ int main() {
     // Creating instances of Account
     Account myAccount("Savings Account", 1000.0);
     Account anotherAccount("Checking Account", 500.0);
+
+    // Using mutators to change account details
+    myAccount.setAccountName("Updated Savings Account");
+    myAccount.setBalance(1200.0); // This will only set if the balance is valid
 
     // Adding transactions to accounts
     myAccount.addTransaction("Income", 500.0);
