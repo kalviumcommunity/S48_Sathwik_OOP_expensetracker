@@ -59,18 +59,20 @@ private:
     int maxTransactions;
 
 public:
-    // Constructor initializes account
+    // Constructor initializes account and allocates memory for transactions
     Account(string name, double bal, int maxTrans = 10)
         : accountName(name), balance(bal), transactionCount(0), maxTransactions(maxTrans) {
         transactions = new TransactionBase*[maxTransactions];
+        // Constructor: Allocates memory for transactions array
     }
 
-    // Destructor frees memory
+    // Destructor frees memory for transactions
     ~Account() override {
         for (int i = 0; i < transactionCount; i++) {
             delete transactions[i];
         }
         delete[] transactions;
+        // Destructor: Frees memory for transactions array
     }
 
     // Adds a transaction to the account
@@ -123,6 +125,7 @@ int main() {
     cout << "Enter the initial balance: ";
     cin >> initialBalance;
 
+    // Constructor: Initializes account with user inputs
     Account myAccount(accountName, initialBalance);
 
     int choice = 0;
