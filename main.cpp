@@ -50,8 +50,9 @@ public:
 };
 
 // Derived class for Account
+// **Single Inheritance**: Account inherits from AccountBase
 class Account : public AccountBase {
-private:
+protected:
     string accountName;
     double balance;
     TransactionBase** transactions;
@@ -106,31 +107,53 @@ public:
     }
 };
 
+// Derived class for SavingsAccount
+// **Multilevel Inheritance**: SavingsAccount inherits from Account, which inherits from AccountBase
+class SavingsAccount : public Account {
+private:
+    double interestRate; // Additional attribute for interest rate
+
+public:
+    // Constructor initializes savings account with interest rate
+    SavingsAccount(string name, double bal, double rate, int maxTrans = 10)
+        : Account(name, bal, maxTrans), interestRate(rate) {}
+
+    // Method to apply interest to the balance
+    void applyInterest() {
+        balance += (balance * interestRate / 100);
+        cout << "Interest applied! New balance: $" << balance << endl;
+    }
+};
+
+// Menu Display Function
 void displayMenu() {
     cout << "\n*** Expense Tracker Menu ***\n";
     cout << "1. Add Transaction\n";
     cout << "2. Display Balance\n";
     cout << "3. Display All Transactions\n";
-    cout << "4. Exit\n";
+    cout << "4. Apply Interest (Savings Account Only)\n";
+    cout << "5. Exit\n";
     cout << "Enter your choice: ";
 }
 
 int main() {
     string accountName;
-    double initialBalance;
+    double initialBalance, interestRate;
 
     cout << "Welcome to the Expense Tracker!" << endl;
     cout << "Enter the account name: ";
     getline(cin, accountName);
     cout << "Enter the initial balance: ";
     cin >> initialBalance;
+    cout << "Enter the interest rate (for savings account): ";
+    cin >> interestRate;
 
-    // Constructor: Initializes account with user inputs
-    Account myAccount(accountName, initialBalance);
+    // Create a SavingsAccount object
+    SavingsAccount myAccount(accountName, initialBalance, interestRate);
 
     int choice = 0;
 
-    while (choice != 4) {
+    while (choice != 5) {
         displayMenu();
         cin >> choice;
 
@@ -153,6 +176,9 @@ int main() {
                 myAccount.displayAllTransactions();
                 break;
             case 4:
+                myAccount.applyInterest(); // Apply interest for savings account
+                break;
+            case 5:
                 cout << "Exiting the Expense Tracker. Goodbye!" << endl;
                 break;
             default:
