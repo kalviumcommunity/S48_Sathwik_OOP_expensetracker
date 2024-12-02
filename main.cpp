@@ -128,17 +128,72 @@ public:
     }
 };
 
-// Menu Display Function
-void displayMenu() {
-    cout << "\n*** Expense Tracker Menu ***\n";
-    cout << "1. Add Single Transaction\n";
-    cout << "2. Add Bulk Transactions\n";
-    cout << "3. Display Balance\n";
-    cout << "4. Display All Transactions\n";
-    cout << "5. Apply Interest (Savings Account Only)\n";
-    cout << "6. Exit\n";
-    cout << "Enter your choice: ";
-}
+// **SOLID Principle 1 (Single Responsibility Principle)**
+// Separate class for menu functionality ensures that the Account classes are not burdened with input/output tasks.
+class MenuHandler {
+public:
+    static void displayMenu() {
+        cout << "\n*** Expense Tracker Menu ***\n";
+        cout << "1. Add Single Transaction\n";
+        cout << "2. Add Bulk Transactions\n";
+        cout << "3. Display Balance\n";
+        cout << "4. Display All Transactions\n";
+        cout << "5. Apply Interest (Savings Account Only)\n";
+        cout << "6. Exit\n";
+        cout << "Enter your choice: ";
+    }
+
+    static void handleInput(SavingsAccount& account) {
+        int choice = 0;
+        while (choice != 6) {
+            displayMenu();
+            cin >> choice;
+            switch (choice) {
+                case 1: {
+                    string type;
+                    double amount;
+                    cout << "Enter transaction type (Income/Expense): ";
+                    cin.ignore(); // Clear input buffer
+                    getline(cin, type);
+                    cout << "Enter transaction amount (positive for income, negative for expense): ";
+                    cin >> amount;
+                    account.addTransaction(type, amount);
+                    break;
+                }
+                case 2: {
+                    int size;
+                    cout << "Enter the number of transactions: ";
+                    cin >> size;
+                    string types[size];
+                    double amounts[size];
+                    for (int i = 0; i < size; i++) {
+                        cout << "Transaction " << i + 1 << " Type (Income/Expense): ";
+                        cin.ignore();
+                        getline(cin, types[i]);
+                        cout << "Transaction " << i + 1 << " Amount: ";
+                        cin >> amounts[i];
+                    }
+                    account.addTransaction(types, amounts, size); // Bulk transactions
+                    break;
+                }
+                case 3:
+                    account.displayBalance();
+                    break;
+                case 4:
+                    account.displayAllTransactions();
+                    break;
+                case 5:
+                    account.applyInterest(); // Apply interest for savings account
+                    break;
+                case 6:
+                    cout << "Exiting the Expense Tracker. Goodbye!" << endl;
+                    break;
+                default:
+                    cout << "Invalid choice. Please try again." << endl;
+            }
+        }
+    }
+};
 
 int main() {
     string accountName;
@@ -155,56 +210,8 @@ int main() {
     // Create a SavingsAccount object
     SavingsAccount myAccount(accountName, initialBalance, interestRate);
 
-    int choice = 0;
-
-    while (choice != 6) {
-        displayMenu();
-        cin >> choice;
-
-        switch (choice) {
-            case 1: {
-                string type;
-                double amount;
-                cout << "Enter transaction type (Income/Expense): ";
-                cin.ignore(); // Clear input buffer
-                getline(cin, type);
-                cout << "Enter transaction amount (positive for income, negative for expense): ";
-                cin >> amount;
-                myAccount.addTransaction(type, amount);
-                break;
-            }
-            case 2: {
-                int size;
-                cout << "Enter the number of transactions: ";
-                cin >> size;
-                string types[size];
-                double amounts[size];
-                for (int i = 0; i < size; i++) {
-                    cout << "Transaction " << i + 1 << " Type (Income/Expense): ";
-                    cin.ignore();
-                    getline(cin, types[i]);
-                    cout << "Transaction " << i + 1 << " Amount: ";
-                    cin >> amounts[i];
-                }
-                myAccount.addTransaction(types, amounts, size); // Bulk transactions
-                break;
-            }
-            case 3:
-                myAccount.displayBalance();
-                break;
-            case 4:
-                myAccount.displayAllTransactions();
-                break;
-            case 5:
-                myAccount.applyInterest(); // Apply interest for savings account
-                break;
-            case 6:
-                cout << "Exiting the Expense Tracker. Goodbye!" << endl;
-                break;
-            default:
-                cout << "Invalid choice. Please try again." << endl;
-        }
-    }
+    // Delegate menu handling to MenuHandler
+    MenuHandler::handleInput(myAccount);
 
     return 0;
 }
