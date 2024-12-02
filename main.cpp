@@ -128,6 +128,23 @@ public:
     }
 };
 
+// **SOLID Principle 2 (Open/Closed Principle)**
+// Added a new derived class to extend functionality for managing recurring transactions
+class RecurringTransaction : public Transaction {
+private:
+    int recurrenceCount; // Number of recurrences
+
+public:
+    RecurringTransaction(string t, double a, int count)
+        : Transaction(t, a), recurrenceCount(count) {}
+
+    // Override displayTransaction to include recurrence details
+    void displayTransaction() override {
+        Transaction::displayTransaction();
+        cout << "Recurring for " << recurrenceCount << " times." << endl;
+    }
+};
+
 // **SOLID Principle 1 (Single Responsibility Principle)**
 // Separate class for menu functionality ensures that the Account classes are not burdened with input/output tasks.
 class MenuHandler {
@@ -139,13 +156,14 @@ public:
         cout << "3. Display Balance\n";
         cout << "4. Display All Transactions\n";
         cout << "5. Apply Interest (Savings Account Only)\n";
-        cout << "6. Exit\n";
+        cout << "6. Add Recurring Transaction\n"; // New menu option for recurring transactions
+        cout << "7. Exit\n";
         cout << "Enter your choice: ";
     }
 
     static void handleInput(SavingsAccount& account) {
         int choice = 0;
-        while (choice != 6) {
+        while (choice != 7) {
             displayMenu();
             cin >> choice;
             switch (choice) {
@@ -185,7 +203,22 @@ public:
                 case 5:
                     account.applyInterest(); // Apply interest for savings account
                     break;
-                case 6:
+                case 6: {
+                    string type;
+                    double amount;
+                    int recurrence;
+                    cout << "Enter recurring transaction type (Income/Expense): ";
+                    cin.ignore();
+                    getline(cin, type);
+                    cout << "Enter transaction amount (positive for income, negative for expense): ";
+                    cin >> amount;
+                    cout << "Enter recurrence count: ";
+                    cin >> recurrence;
+                    RecurringTransaction rt(type, amount, recurrence);
+                    rt.displayTransaction(); // Show the recurring transaction details
+                    break;
+                }
+                case 7:
                     cout << "Exiting the Expense Tracker. Goodbye!" << endl;
                     break;
                 default:
