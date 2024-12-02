@@ -91,13 +91,6 @@ public:
         }
     }
 
-    // **Function Overloading**: Overloaded `addTransaction` for bulk transactions
-    void addTransaction(const string types[], const double amounts[], int size) {
-        for (int i = 0; i < size; i++) {
-            addTransaction(types[i], amounts[i]); // Reusing the single transaction method
-        }
-    }
-
     // Implementation of pure virtual functions from base class
     void displayBalance() const override {
         cout << "Current Balance in " << accountName << ": $" << balance << endl;
@@ -128,8 +121,9 @@ public:
     }
 };
 
-// **SOLID Principle 2 (Open/Closed Principle)**
-// Added a new derived class to extend functionality for managing recurring transactions
+// **SOLID Principle 3 (Liskov Substitution Principle)** 
+// Adding new derived class for RecurringTransaction ensures it behaves like Transaction 
+// without breaking the existing code functionality.
 class RecurringTransaction : public Transaction {
 private:
     int recurrenceCount; // Number of recurrences
@@ -146,24 +140,21 @@ public:
 };
 
 // **SOLID Principle 1 (Single Responsibility Principle)**
-// Separate class for menu functionality ensures that the Account classes are not burdened with input/output tasks.
 class MenuHandler {
 public:
     static void displayMenu() {
         cout << "\n*** Expense Tracker Menu ***\n";
         cout << "1. Add Single Transaction\n";
-        cout << "2. Add Bulk Transactions\n";
-        cout << "3. Display Balance\n";
-        cout << "4. Display All Transactions\n";
-        cout << "5. Apply Interest (Savings Account Only)\n";
-        cout << "6. Add Recurring Transaction\n"; // New menu option for recurring transactions
-        cout << "7. Exit\n";
+        cout << "2. Display Balance\n";
+        cout << "3. Display All Transactions\n";
+        cout << "4. Add Recurring Transaction\n"; // New menu option for recurring transactions
+        cout << "5. Exit\n";
         cout << "Enter your choice: ";
     }
 
     static void handleInput(SavingsAccount& account) {
         int choice = 0;
-        while (choice != 7) {
+        while (choice != 5) {
             displayMenu();
             cin >> choice;
             switch (choice) {
@@ -171,58 +162,42 @@ public:
                     string type;
                     double amount;
                     cout << "Enter transaction type (Income/Expense): ";
-                    cin.ignore(); // Clear input buffer
+                    cin.ignore();
                     getline(cin, type);
                     cout << "Enter transaction amount (positive for income, negative for expense): ";
                     cin >> amount;
                     account.addTransaction(type, amount);
                     break;
                 }
-                case 2: {
-                    int size;
-                    cout << "Enter the number of transactions: ";
-                    cin >> size;
-                    string types[size];
-                    double amounts[size];
-                    for (int i = 0; i < size; i++) {
-                        cout << "Transaction " << i + 1 << " Type (Income/Expense): ";
-                        cin.ignore();
-                        getline(cin, types[i]);
-                        cout << "Transaction " << i + 1 << " Amount: ";
-                        cin >> amounts[i];
-                    }
-                    account.addTransaction(types, amounts, size); // Bulk transactions
-                    break;
-                }
-                case 3:
+                case 2:
                     account.displayBalance();
                     break;
-                case 4:
+                case 3:
                     account.displayAllTransactions();
                     break;
-                case 5:
-                    account.applyInterest(); // Apply interest for savings account
-                    break;
-                case 6: {
+                case 4: {
                     string type;
                     double amount;
                     int recurrence;
-                    cout << "Enter recurring transaction type (Income/Expense): ";
+                    cout << "Enter recurring transaction type: ";
                     cin.ignore();
                     getline(cin, type);
-                    cout << "Enter transaction amount (positive for income, negative for expense): ";
+                    cout << "Enter transaction amount: ";
                     cin >> amount;
                     cout << "Enter recurrence count: ";
                     cin >> recurrence;
+
+                    // Liskov Substitution Principle applied here:
+                    // RecurringTransaction used where TransactionBase is expected
                     RecurringTransaction rt(type, amount, recurrence);
-                    rt.displayTransaction(); // Show the recurring transaction details
+                    rt.displayTransaction();
                     break;
                 }
-                case 7:
-                    cout << "Exiting the Expense Tracker. Goodbye!" << endl;
+                case 5:
+                    cout << "Exiting. Goodbye!" << endl;
                     break;
                 default:
-                    cout << "Invalid choice. Please try again." << endl;
+                    cout << "Invalid choice. Try again." << endl;
             }
         }
     }
@@ -237,10 +212,10 @@ int main() {
     getline(cin, accountName);
     cout << "Enter the initial balance: ";
     cin >> initialBalance;
-    cout << "Enter the interest rate (for savings account): ";
+    cout << "Enter the interest rate (Savings Account): ";
     cin >> interestRate;
 
-    // Create a SavingsAccount object
+    // Create SavingsAccount
     SavingsAccount myAccount(accountName, initialBalance, interestRate);
 
     // Delegate menu handling to MenuHandler
