@@ -5,7 +5,7 @@ using namespace std;
 // Abstract base class for Transactions
 class TransactionBase {
 public:
-    virtual void displayTransaction() = 0; // Pure virtual function for displaying transaction
+    virtual void displayTransaction() = 0; // Pure virtual function for displaying transaction (Abstract Class)
     virtual ~TransactionBase() = default; // Virtual destructor for proper cleanup
 };
 
@@ -28,7 +28,7 @@ public:
     }
 
     // Implementation of pure virtual function from base class
-    void displayTransaction() override {
+    void displayTransaction() override { // Virtual Function Implementation
         cout << "Transaction Type: " << type << ", Amount: $" << amount << endl;
     }
 
@@ -44,7 +44,7 @@ int Transaction::transactionCount = 0;
 // Abstract base class for Accounts
 class AccountBase {
 public:
-    virtual void displayBalance() const = 0;  // Pure virtual function for displaying balance
+    virtual void displayBalance() const = 0;  // Pure virtual function for displaying balance (Abstract Class)
     virtual void displayAllTransactions() const = 0; // Pure virtual function for displaying transactions
     virtual ~AccountBase() = default; // Virtual destructor for proper cleanup
 };
@@ -54,7 +54,7 @@ class Account : public AccountBase {
 protected:
     string accountName;
     double balance;
-    TransactionBase** transactions;
+    TransactionBase** transactions; // Array of pointers to TransactionBase (polymorphism usage)
     int transactionCount;
     int maxTransactions;
 
@@ -76,7 +76,7 @@ public:
     // Adds a transaction to the account
     void addTransaction(const string& type, double amount) {
         if (transactionCount < maxTransactions) {
-            transactions[transactionCount] = new Transaction(type, amount);
+            transactions[transactionCount] = new Transaction(type, amount); // Storing derived class in base class pointer
             transactionCount++;
 
             if (amount > 0) {
@@ -106,7 +106,7 @@ public:
     void displayAllTransactions() const override {
         cout << "Transactions for " << accountName << ":" << endl;
         for (int i = 0; i < transactionCount; i++) {
-            transactions[i]->displayTransaction();
+            transactions[i]->displayTransaction(); // Polymorphic call to displayTransaction
         }
     }
 };
